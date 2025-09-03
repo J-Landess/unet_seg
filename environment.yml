@@ -1,0 +1,21 @@
+name: unet-semantic-segmentation
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pytorch>=2.0.0
+  - torchvision>=0.15.0
+  - opencv>=4.8.0
+  - numpy>=1.24.0
+  - pillow>=9.5.0
+  - matplotlib>=3.7.0
+  - seaborn>=0.12.0
+  - scikit-learn>=1.3.0
+  - pyyaml>=6.0
+  - pip
+  - pip:
+      - tqdm>=4.65.0
+      - tensorboard>=2.13.0
+      - albumentations>=1.3.0
+      - wandb>=0.15.0
