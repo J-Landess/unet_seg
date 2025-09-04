@@ -62,80 +62,93 @@ python3 -c "from models import UNet; print('✅ U-Net model ready')"
 python3 -c "from data import SegmentationDataset; print('✅ Dataset classes ready')"
 ```
 
-## 🎥 **Video Frame Iterator Usage**
+## 🎥 **Video Processing Module Usage**
 
 ### **Basic Usage**
 ```python
-from video_frame_iterator import VideoFrameIterator
+from video_processing import VideoFrameIterator
 
-# Process video frame by frame
+# Process video frame by frame (numpy arrays)
 with VideoFrameIterator("video.mp4") as iterator:
     for frame, metadata in iterator:
         print(f"Frame {metadata.frame_number}: {metadata.timestamp:.2f}s")
         # Your processing code here...
 ```
 
-### **Advanced Usage with Metadata**
+### **Tensor Output for Deep Learning**
 ```python
-# Collect rich metadata and skip frames
+# Process as PyTorch tensors ready for neural networks
 with VideoFrameIterator(
     "video.mp4",
-    frame_skip=10,           # Process every 10th frame
-    collect_frame_stats=True, # Collect brightness, color stats
-    resize_frames=(640, 480)  # Resize frames
+    output_format="tensor",   # Output as tensors
+    normalize=True,          # Normalize to [0,1] range
+    resize_frames=(224, 224), # Standard ML input size
+    device="cpu"             # or "cuda"
 ) as iterator:
     
-    metadata_list = []
-    for frame, metadata in iterator:
-        metadata_list.append(metadata)
-        
-        # Access metadata
-        brightness = metadata.custom_metadata['mean_brightness']
-        colors = metadata.custom_metadata['mean_rgb']
-        
-    # Save metadata to JSON
-    iterator.save_metadata_batch(metadata_list, "video_metadata.json")
+    for frame_tensor, metadata in iterator:
+        # frame_tensor: (3, 224, 224) RGB tensor, ready for models
+        model_input = frame_tensor.unsqueeze(0)  # Add batch dimension
+        # predictions = model(model_input)
 ```
 
-### **Batch Processing**
+### **Batch Tensor Processing**
 ```python
-from video_frame_iterator import BatchVideoProcessor
+from video_processing import VideoFrameIterator, TensorFrameBatcher
 
-# Process multiple videos
-processor = BatchVideoProcessor(
-    ["video1.mp4", "video2.mp4"],
-    frame_skip=30,
-    collect_frame_stats=True
-)
+batcher = TensorFrameBatcher(batch_size=8, device="cpu")
 
-results = processor.process_all()
-processor.save_all_metadata("metadata_output/")
+with VideoFrameIterator("video.mp4", output_format="tensor") as iterator:
+    for frame_tensor, metadata in iterator:
+        batch_tensor, batch_metadata = batcher.add_frame(frame_tensor, metadata)
+        
+        if batch_tensor is not None:
+            # Process batch: Shape (8, 3, H, W)
+            # predictions = model(batch_tensor)
+            print(f"Processing batch: {batch_tensor.shape}")
 ```
 
-## 📁 **Why the Separate `semantic_segmentation_unet/` Folder?**
+### **U-Net Video Segmentation**
+```python
+# Perfect for video semantic segmentation
+with VideoFrameIterator(
+    "video.mp4",
+    output_format="tensor",
+    normalize=True,
+    resize_frames=(512, 512),  # U-Net input size
+    frame_skip=10
+) as iterator:
+    
+    for frame_tensor, metadata in iterator:
+        input_batch = frame_tensor.unsqueeze(0)  # (1, 3, 512, 512)
+        
+        # with torch.no_grad():
+        #     segmentation = unet_model(input_batch)
+        #     predicted_mask = torch.argmax(segmentation, dim=1)
+        
+        print(f"Frame {metadata.frame_number} ready for U-Net")
+```
 
-The `semantic_segmentation_unet/` folder exists because:
+## 📁 **Cleaned Up Structure**
 
-1. **Package Structure**: It's designed as a **Python package** for distribution
-2. **Development vs Distribution**: 
-   - Root level = Development workspace with examples, configs, etc.
-   - `semantic_segmentation_unet/` = Clean package for `pip install`
-3. **Import Structure**: The `__init__.py` shows it's meant to be imported as:
-   ```python
-   from semantic_segmentation_unet import UNet, SegmentationTrainer
-   ```
+✅ **Removed** the duplicate `semantic_segmentation_unet/` folder as requested!
 
-**Current Issue**: There's complete duplication between root and the package folder. 
-
-**Recommendation**: Choose one structure:
-- Keep root-level for development workspace
-- Use `semantic_segmentation_unet/` as the main package
+The codebase now has a clean, single structure:
+- **Root level**: Main U-Net implementation
+- **`video_processing/`**: Dedicated video processing module with tensor support
 
 ## 🧪 **Testing the Code**
 
-### **Test Video Iterator (Works Now)**
+### **Test Video Processing Module**
 ```bash
+# Test basic functionality
 python3 test_video_iterator.py
+
+# Test tensor functionality (requires PyTorch)
+python3 example_tensor_video_processing.py
+
+# Command line usage
+python3 -m video_processing.frame_iterator video.mp4 --demo_tensor
 ```
 
 ### **Test U-Net (Requires Dependencies)**
@@ -145,23 +158,28 @@ python3 -c "from models import UNet; model = UNet(); print('✅ U-Net model crea
 python3 -c "from training import SegmentationTrainer; print('✅ Trainer ready')"
 ```
 
-## 📊 **What the Video Iterator Provides**
+## 📊 **Enhanced Video Processing Features**
+
+### **Output Formats:**
+- **NumPy arrays**: Traditional (H, W, C) BGR format
+- **PyTorch tensors**: (C, H, W) RGB format, normalized, device-aware
+- **Both formats**: Get both numpy and tensor simultaneously
 
 ### **Frame Metadata Collected:**
 - Frame number and timestamp
 - Video info (fps, dimensions, codec, duration)
 - Frame statistics (brightness, color distribution, etc.)
+- Tensor statistics (shape, dtype, device, range)
 - Processing time
 - Custom metadata via callbacks
 
-### **Features:**
-- Memory-efficient frame-by-frame processing
-- Flexible frame sampling (skip frames, time ranges)
-- Rich statistical analysis of each frame
-- Batch processing for multiple videos
-- JSON metadata export
-- Custom analysis callbacks
-- Context manager for automatic cleanup
+### **Deep Learning Features:**
+- **Tensor batching**: Automatic batching for efficient model inference
+- **Normalization**: Pixel values normalized to [0, 1] range
+- **Device support**: CPU/GPU tensor placement
+- **CHW format**: Channels-first format for PyTorch models
+- **RGB conversion**: Automatic BGR→RGB conversion for tensors
+- **Memory efficient**: Context managers for automatic cleanup
 
 ## 🎯 **Next Steps**
 
