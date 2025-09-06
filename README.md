@@ -1,126 +1,89 @@
-# Semantic Segmentation U-Net
+# U-Net Semantic Segmentation
 
-A modular, extensible implementation of U-Net for semantic segmentation using PyTorch, OpenCV, and other computer vision libraries.
+A comprehensive, production-ready implementation of U-Net for semantic segmentation with support for BDD100K and KITTI datasets, video processing, and advanced deep learning features.
 
-## Features
+## 🚀 **Features**
 
-- **Modular Architecture**: Clean, extensible codebase with separate modules for models, data, training, inference, and utilities
-- **U-Net Implementation**: Complete U-Net architecture with skip connections and customizable depth
-- **Data Augmentation**: Built-in support for various augmentations using Albumentations
-- **Comprehensive Metrics**: Pixel accuracy, mean IoU, Dice coefficient, and per-class metrics
-- **Visualization Tools**: Rich visualization utilities for predictions, training curves, and analysis
+- **Complete U-Net Architecture**: 31M parameters with skip connections and customizable depth
+- **Real-World Datasets**: BDD100K (100K driving images) and KITTI support
+- **Video Processing**: Frame-by-frame video analysis with tensor output
+- **Advanced Data Augmentation**: Albumentations with driving-specific augmentations
+- **Professional Metrics**: Pixel accuracy, mean IoU, Dice coefficient, per-class metrics
+- **Comprehensive Visualization**: Training curves, prediction overlays, dataset analysis
 - **Flexible Configuration**: YAML-based configuration system
-- **Logging Support**: TensorBoard and Weights & Biases integration
-- **Easy Inference**: Simple API for single image and batch inference
+- **Experiment Tracking**: TensorBoard and Weights & Biases integration
+- **Production Ready**: Complete CLI interface, error handling, logging
 
-## Project Structure
+## 📦 **Quick Start**
 
-```
-semantic_segmentation_unet/
-├── config/
-│   └── config.yaml              # Configuration file
-├── data/
-│   ├── __init__.py
-│   └── dataset.py               # Dataset classes and data loaders
-├── models/
-│   ├── __init__.py
-│   └── unet.py                  # U-Net model implementation
-├── training/
-│   ├── __init__.py
-│   └── trainer.py               # Training pipeline
-├── inference/
-│   ├── __init__.py
-│   └── inference.py             # Inference engine
-├── utils/
-│   ├── __init__.py
-│   ├── metrics.py               # Evaluation metrics
-│   └── visualization.py         # Visualization utilities
-├── main.py                      # Main entry point
-├── requirements.txt             # Dependencies
-└── README.md                    # This file
+### **1. Installation**
+
+**Option A: Conda (Recommended)**
+```bash
+# Create environment
+conda env create -f environment-macos.yml  # macOS
+# or
+conda env create -f environment-cuda.yml   # Linux/Windows with CUDA
+
+# Activate environment
+conda activate unet-semantic-segmentation
 ```
 
-## Installation
+**Option B: Pip**
+```bash
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-1. **Clone or create the project directory**:
-   ```bash
-   mkdir semantic_segmentation_unet
-   cd semantic_segmentation_unet
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Setup data structure**:
-   ```bash
-   python main.py setup
-   ```
-
-## Quick Start
-
-### 1. Prepare Your Data
-
-Organize your data in the following structure:
-```
-data/
-├── train/
-│   ├── images/          # Training images
-│   └── masks/           # Training masks (same filenames as images)
-├── val/
-│   ├── images/          # Validation images
-│   └── masks/           # Validation masks
-└── test/
-    ├── images/          # Test images
-    └── masks/           # Test masks
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-### 2. Configure Training
-
-Edit `config/config.yaml` to match your dataset:
-```yaml
-model:
-  num_classes: 21        # Number of classes in your dataset
-  input_channels: 3      # RGB images
-
-data:
-  train_dir: "data/train"
-  val_dir: "data/val"
-  image_size: [512, 512] # Input image size
-
-training:
-  batch_size: 8
-  num_epochs: 100
-  learning_rate: 0.001
+### **2. Verify Installation**
+```bash
+# Test everything works
+python test_environment.py
 ```
 
-### 3. Train the Model
+### **3. Quick Test**
+```python
+# Copy-paste into iPython
+from data import list_available_datasets, create_sample_dataset_for_testing
+from models import UNet
+import torch
+
+# Show available datasets
+list_available_datasets()
+
+# Create sample data
+bdd_path, kitti_path = create_sample_dataset_for_testing("test")
+
+# Test U-Net
+model = UNet(n_channels=3, n_classes=19)
+print(f"✅ U-Net ready: {sum(p.numel() for p in model.parameters())} parameters")
+```
+
+## 🎯 **Usage**
+
+### **Command Line Interface**
 
 ```bash
+# Setup data structure
+python main.py setup
+
+# Train model
 python main.py train --config config/config.yaml
+
+# Run inference
+python main.py infer --model checkpoints/best_model.pth --input image.jpg --output outputs/
+
+# Evaluate model
+python main.py evaluate --model checkpoints/best_model.pth --dataset data/test/ --output results/
 ```
 
-### 4. Run Inference
+### **Python API**
 
-```bash
-# Single image
-python main.py infer --model checkpoints/best_model.pth --config config/config.yaml --input test_image.jpg --output outputs/
-
-# Batch processing
-python main.py infer --model checkpoints/best_model.pth --config config/config.yaml --input data/test/images/ --output outputs/ --batch
-```
-
-### 5. Evaluate the Model
-
-```bash
-python main.py evaluate --model checkpoints/best_model.pth --config config/config.yaml --dataset data/test/ --output evaluation_results/
-```
-
-## Usage Examples
-
-### Training with Custom Configuration
-
+#### **Training**
 ```python
 from training import SegmentationTrainer
 
@@ -134,8 +97,7 @@ trainer.train()
 trainer.train(resume_from="checkpoints/checkpoint_epoch_50.pth")
 ```
 
-### Inference on Custom Images
-
+#### **Inference**
 ```python
 from inference import SegmentationInference
 
@@ -150,15 +112,129 @@ prediction, probabilities = inference.predict_single("image.jpg")
 
 # Create visualization
 visualization = inference.visualize_prediction("image.jpg", prediction)
-
-# Save results
-inference.save_prediction(prediction, "outputs/prediction.png")
 ```
 
-### Custom Dataset
-
+#### **Datasets**
 ```python
-from data import SegmentationDataset, create_dataloader
+from data import BDD100KSegmentationDataset, KITTISegmentationDataset
+
+# BDD100K dataset
+bdd_dataset = BDD100KSegmentationDataset(
+    root_dir="datasets/bdd100k",
+    split='train',
+    image_size=(512, 512)
+)
+
+# KITTI dataset
+kitti_dataset = KITTISegmentationDataset(
+    root_dir="datasets/kitti", 
+    split='train',
+    image_size=(512, 512)
+)
+```
+
+#### **Video Processing**
+```python
+from video_processing import VideoFrameIterator, TensorFrameBatcher
+
+# Process video frames
+with VideoFrameIterator("video.mp4", output_format="tensor") as iterator:
+    for frame, metadata in iterator:
+        # frame is a PyTorch tensor ready for neural networks
+        print(f"Frame {metadata.frame_number}: {frame.shape}")
+
+# Batch processing
+batcher = TensorFrameBatcher(batch_size=8)
+# ... add frames to batcher
+batch = batcher.get_batch()  # Ready for model inference
+```
+
+## 📁 **Project Structure**
+
+```
+unet/
+├── main.py                      # Main entry point
+├── config/
+│   └── config.yaml              # Configuration file
+├── data/
+│   ├── __init__.py
+│   ├── dataset.py               # Generic dataset classes
+│   ├── bdd100k_dataset.py       # BDD100K dataset implementation
+│   ├── kitti_dataset.py         # KITTI dataset implementation
+│   └── dataset_utils.py         # Dataset utilities and analysis
+├── models/
+│   ├── __init__.py
+│   └── unet.py                  # U-Net model implementation
+├── training/
+│   ├── __init__.py
+│   └── trainer.py               # Training pipeline
+├── inference/
+│   ├── __init__.py
+│   └── inference.py             # Inference engine
+├── utils/
+│   ├── __init__.py
+│   ├── metrics.py               # Evaluation metrics
+│   └── visualization.py         # Visualization utilities
+├── video_processing/
+│   ├── __init__.py
+│   ├── frame_iterator.py        # Video frame processing
+│   └── README.md                # Video processing documentation
+├── examples/                    # Example scripts
+├── requirements.txt             # Pip dependencies
+├── environment.yml              # Conda environment (general)
+├── environment-macos.yml        # Conda environment (macOS)
+├── environment-cuda.yml         # Conda environment (CUDA)
+└── test_environment.py          # Environment testing script
+```
+
+## 🔧 **Configuration**
+
+Edit `config/config.yaml` to customize your setup:
+
+```yaml
+model:
+  name: "unet"
+  input_channels: 3
+  num_classes: 19              # 19 for BDD100K/KITTI
+  encoder_depth: 5
+  dropout: 0.2
+
+data:
+  dataset_type: "bdd100k"      # "bdd100k" or "kitti"
+  root_dir: "datasets/bdd100k"
+  image_size: [512, 512]
+  augmentation:
+    horizontal_flip: 0.5
+    brightness_contrast: 0.2
+    shadow: 0.1
+    fog: 0.05
+
+training:
+  batch_size: 8
+  num_epochs: 100
+  learning_rate: 0.001
+  weight_decay: 1e-4
+  scheduler: "cosine"
+  early_stopping_patience: 10
+```
+
+## 📊 **Supported Datasets**
+
+### **BDD100K Dataset**
+- **100K driving images** with 19 semantic classes
+- **Weather augmentations**: fog, rain, shadow
+- **Class balancing** with computed weights
+- **Download**: https://bdd-data.berkeley.edu/
+
+### **KITTI Dataset**
+- **Autonomous driving scenes** with detailed labels
+- **Sequence support** for video processing
+- **Temporal analysis** capabilities
+- **Download**: http://www.cvlibs.net/datasets/kitti/
+
+### **Custom Datasets**
+```python
+from data import SegmentationDataset
 
 # Create custom dataset
 dataset = SegmentationDataset(
@@ -169,125 +245,125 @@ dataset = SegmentationDataset(
         'horizontal_flip': 0.5,
         'rotation': 15,
         'brightness_contrast': 0.2
-    },
-    is_training=True
+    }
 )
-
-# Create dataloader
-dataloader = create_dataloader(dataset, batch_size=8, shuffle=True)
 ```
 
-### Visualization
+## 🎥 **Video Processing**
+
+The video processing module provides frame-by-frame analysis with tensor output:
 
 ```python
-from utils import SegmentationVisualizer
+from video_processing import VideoFrameIterator, TensorFrameBatcher
 
-# Initialize visualizer
-visualizer = SegmentationVisualizer()
+# Basic video iteration
+with VideoFrameIterator("video.mp4") as iterator:
+    for frame, metadata in iterator:
+        print(f"Frame {metadata.frame_number}: {frame.shape}")
 
-# Create prediction visualization
-fig = visualizer.visualize_prediction(
-    image=original_image,
-    prediction=prediction_mask,
-    ground_truth=gt_mask  # optional
-)
+# Tensor output for deep learning
+with VideoFrameIterator("video.mp4", output_format="tensor") as iterator:
+    for frame, metadata in iterator:
+        # frame is a PyTorch tensor (C, H, W) normalized to [0,1]
+        prediction = model(frame.unsqueeze(0))
 
-# Plot training curves
-fig = visualizer.plot_training_curves(
-    train_losses=train_losses,
-    val_losses=val_losses,
-    train_metrics=train_metrics,
-    val_metrics=val_metrics
-)
+# Batch processing
+batcher = TensorFrameBatcher(batch_size=8)
+# ... add frames
+batch = batcher.get_batch()  # (B, C, H, W) tensor
 ```
 
-## Configuration
+## 📈 **Performance & Monitoring**
 
-The `config/config.yaml` file contains all training and model parameters:
+### **Metrics**
+- **Pixel Accuracy**: Overall pixel-level accuracy
+- **Mean IoU**: Intersection over Union for each class
+- **Dice Coefficient**: Overlap measure for segmentation
+- **Per-Class Metrics**: Detailed analysis for each class
 
-### Model Configuration
-- `input_channels`: Number of input channels (3 for RGB)
-- `num_classes`: Number of segmentation classes
-- `encoder_depth`: Depth of U-Net encoder
-- `dropout`: Dropout rate for regularization
+### **Visualization**
+- **Training Curves**: Loss and metric plots
+- **Prediction Overlays**: Side-by-side comparisons
+- **Confusion Matrices**: Class-wise performance
+- **Dataset Analysis**: Class distribution and statistics
 
-### Training Configuration
-- `batch_size`: Training batch size
-- `num_epochs`: Number of training epochs
-- `learning_rate`: Initial learning rate
-- `weight_decay`: L2 regularization weight
-- `scheduler`: Learning rate scheduler type
-- `early_stopping_patience`: Early stopping patience
+### **Experiment Tracking**
+- **TensorBoard**: Real-time training monitoring
+- **Weights & Biases**: Advanced experiment tracking
+- **Logging**: Comprehensive training logs
 
-### Data Configuration
-- `train_dir`/`val_dir`/`test_dir`: Dataset directories
-- `image_size`: Input image size [height, width]
-- `augmentation`: Data augmentation parameters
+## 🛠️ **Development**
 
-## Extending the Framework
-
-### Adding New Models
-
-1. Create a new model file in `models/`
-2. Implement the model class with `forward()` method
+### **Adding New Models**
+1. Create model file in `models/`
+2. Implement `forward()` method
 3. Add to `models/__init__.py`
-4. Update the trainer to use your model
+4. Update trainer configuration
 
-### Adding New Datasets
-
-1. Create a new dataset class inheriting from `SegmentationDataset`
-2. Implement the required methods
+### **Adding New Datasets**
+1. Create dataset class in `data/`
+2. Implement required methods
 3. Add to `data/__init__.py`
+4. Update configuration options
 
-### Adding New Metrics
-
+### **Adding New Metrics**
 1. Add metric functions to `utils/metrics.py`
-2. Update the `SegmentationMetrics` class
+2. Update `SegmentationMetrics` class
 3. Add to `utils/__init__.py`
 
-## Dependencies
+## 🔍 **Troubleshooting**
 
-- **PyTorch**: Deep learning framework
-- **OpenCV**: Computer vision operations
-- **Albumentations**: Data augmentation
-- **Matplotlib/Seaborn**: Visualization
-- **TensorBoard**: Training monitoring
-- **Weights & Biases**: Experiment tracking (optional)
+### **Common Issues**
 
-## Performance Tips
+1. **OpenCV Import Error (macOS)**
+   ```bash
+   # Use headless version
+   pip install opencv-python-headless
+   ```
 
-1. **Use GPU**: Ensure CUDA is available for faster training
-2. **Batch Size**: Adjust batch size based on GPU memory
-3. **Data Loading**: Use multiple workers for data loading
-4. **Mixed Precision**: Consider using automatic mixed precision for faster training
-5. **Model Optimization**: Use model compilation for inference speedup
+2. **CUDA Out of Memory**
+   - Reduce batch size in config
+   - Decrease image size
+   - Enable gradient checkpointing
 
-## Troubleshooting
+3. **Data Loading Errors**
+   - Check file paths in config
+   - Verify dataset directory structure
+   - Ensure image/mask filename matching
 
-### Common Issues
+### **Environment Testing**
+```bash
+# Run comprehensive test
+python test_environment.py
 
-1. **CUDA Out of Memory**: Reduce batch size or image size
-2. **Data Loading Errors**: Check file paths and formats
-3. **Poor Performance**: Adjust learning rate, add more data augmentation
-4. **Slow Training**: Use GPU, increase num_workers, enable mixed precision
+# Test specific components
+python -c "from data import list_available_datasets; list_available_datasets()"
+python -c "from models import UNet; print('U-Net ready!')"
+```
 
-### Getting Help
+## 📚 **Documentation**
 
-- Check the configuration file format
-- Verify data directory structure
-- Ensure all dependencies are installed
-- Check GPU availability and CUDA installation
+- **Installation Guide**: `INSTALLATION_GUIDE.md`
+- **Video Processing**: `video_processing/README.md`
+- **Configuration Reference**: `config/config.yaml`
+- **API Documentation**: Inline docstrings and type hints
 
-## License
+## 🤝 **Contributing**
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for new functionality
+4. Submit a pull request
+
+## 📄 **License**
 
 This project is open source and available under the MIT License.
 
-## Contributing
+## 🙏 **Acknowledgments**
 
-Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
-
-## Acknowledgments
-
-- U-Net paper: "U-Net: Convolutional Networks for Biomedical Image Segmentation"
-- PyTorch team for the excellent deep learning framework
-- Albumentations for comprehensive data augmentation
+- **U-Net Paper**: "U-Net: Convolutional Networks for Biomedical Image Segmentation"
+- **BDD100K Dataset**: Berkeley DeepDrive 100K dataset
+- **KITTI Dataset**: Karlsruhe Institute of Technology
+- **PyTorch Team**: Excellent deep learning framework
+- **Albumentations**: Comprehensive data augmentation library
