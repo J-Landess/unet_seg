@@ -12,7 +12,7 @@ from pathlib import Path
 
 # Test if we can import the video iterator
 try:
-    from video_frame_iterator import VideoFrameIterator, VideoFrameMetadata, BatchVideoProcessor
+    from video_processing import VideoFrameIterator, VideoFrameMetadata, BatchVideoProcessor, TensorFrameBatcher
     print("✓ Video iterator imports successful")
 except ImportError as e:
     print(f"✗ Import error: {e}")
@@ -171,6 +171,59 @@ def test_batch_processing(video_paths: list):
         print(f"✗ Error during batch processing: {e}")
 
 
+def test_tensor_functionality(video_path: str):
+    """Test tensor output functionality"""
+    print(f"\n=== Testing Tensor Functionality ===")
+    
+    try:
+        # Test tensor output
+        with VideoFrameIterator(
+            video_path, 
+            frame_skip=20,
+            output_format="tensor",
+            normalize=True,
+            resize_frames=(224, 224)
+        ) as iterator:
+            
+            for i, (frame_tensor, metadata) in enumerate(iterator):
+                print(f"Tensor frame {metadata.frame_number}: "
+                      f"Shape {frame_tensor.shape}, "
+                      f"dtype {frame_tensor.dtype}, "
+                      f"range [{frame_tensor.min():.3f}, {frame_tensor.max():.3f}]")
+                
+                if i >= 3:  # Test 3 frames
+                    break
+        
+        print("✓ Tensor output working")
+        
+        # Test tensor batching
+        print("\n--- Testing Tensor Batching ---")
+        batcher = TensorFrameBatcher(batch_size=3, device="cpu")
+        
+        with VideoFrameIterator(
+            video_path,
+            frame_skip=25,
+            output_format="tensor",
+            normalize=True,
+            resize_frames=(224, 224)
+        ) as iterator:
+            
+            for i, (frame_tensor, metadata) in enumerate(iterator):
+                batch_tensor, batch_metadata = batcher.add_frame(frame_tensor, metadata)
+                
+                if batch_tensor is not None:
+                    print(f"Batch created: Shape {batch_tensor.shape}")
+                    break
+                
+                if i >= 5:  # Safety limit
+                    break
+        
+        print("✓ Tensor batching working")
+        
+    except Exception as e:
+        print(f"✗ Error during tensor testing: {e}")
+
+
 def main():
     """Main test function"""
     print("=== Video Frame Iterator Test Suite ===")
@@ -184,21 +237,41 @@ def main():
         print("✗ OpenCV not available - limited testing possible")
         opencv_available = False
     
+    # Check if PyTorch is available
+    try:
+        import torch
+        print("✓ PyTorch available")
+        torch_available = True
+    except ImportError:
+        print("✗ PyTorch not available - tensor functionality disabled")
+        torch_available = False
+    
     if opencv_available:
         # Create test video
         test_video_path = create_test_video()
         
         if test_video_path and Path(test_video_path).exists():
-            # Run tests
+            # Run basic tests
             test_basic_iteration(test_video_path)
             test_specific_frame_access(test_video_path)
             test_metadata_collection(test_video_path)
             test_batch_processing([test_video_path])
             
+            # Test tensor functionality if PyTorch is available
+            if torch_available:
+                test_tensor_functionality(test_video_path)
+            else:
+                print("\n⚠️  Skipping tensor tests - PyTorch not available")
+            
             print(f"\n=== Test Summary ===")
-            print(f"✓ All tests completed")
+            print(f"✓ All available tests completed")
             print(f"Test video: {test_video_path}")
             print(f"Metadata file: test_metadata.json")
+            
+            if torch_available:
+                print("✓ Tensor functionality tested")
+            else:
+                print("⚠️  Tensor functionality not tested (install PyTorch)")
             
             # Clean up
             try:
@@ -211,9 +284,10 @@ def main():
             print("✗ Could not create test video")
     
     else:
-        print("\nTo fully test this iterator, install OpenCV:")
-        print("  pip install opencv-python")
-        print("\nThe iterator is ready to use once OpenCV is available.")
+        print("\nTo fully test this iterator, install dependencies:")
+        print("  pip install opencv-python numpy")
+        print("  pip install torch  # For tensor functionality")
+        print("\nThe iterator is ready to use once dependencies are available.")
 
 
 if __name__ == "__main__":
