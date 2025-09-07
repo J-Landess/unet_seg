@@ -1,0 +1,15 @@
+Trained Model Inference Summary
+========================================
+
+Model used: checkpoints/best_model.pth
+Frames processed: 8
+Model type: Trained U-Net (21 classes)
+
+Output files per frame:
+- *_original.jpg: Original video frame
+- *_mask.png: Segmentation mask (scaled)
+- *_visualization.jpg: Colored segmentation
+- *_overlay.jpg: Original + segmentation overlay
+- *_resized_overlay.jpg: Resized frame + segmentation
+
+This shows how the trained model performs on unseen video data.

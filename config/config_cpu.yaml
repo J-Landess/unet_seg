@@ -1,0 +1,47 @@
+# Configuration file for U-Net Semantic Segmentation - CPU Optimized
+
+# Model Configuration
+model:
+  name: "unet"
+  input_channels: 3
+  num_classes: 21  # Pascal VOC classes
+  encoder_depth: 4  # Reduced depth for CPU
+  decoder_channels: [256, 128, 64, 32]  # Reduced channels
+  dropout: 0.1  # Reduced dropout
+
+# Training Configuration - CPU Optimized
+training:
+  batch_size: 2  # Smaller batch size for CPU
+  num_epochs: 10  # Fewer epochs for testing
+  learning_rate: 0.001
+  weight_decay: 1e-4
+  scheduler: "cosine"
+  warmup_epochs: 2
+  early_stopping_patience: 5
+  
+# Data Configuration
+data:
+  train_dir: "data/bdd100k_sample/images"
+  val_dir: "data/bdd100k_sample/labels"  # Using labels as validation for demo
+  test_dir: "data/bdd100k_sample/images"
+  image_size: [256, 256]  # Smaller images for CPU
+  num_workers: 2  # Fewer workers for CPU
+  augmentation:
+    horizontal_flip: 0.5
+    vertical_flip: 0.2
+    rotation: 10  # Reduced rotation
+    brightness_contrast: 0.1  # Reduced augmentation
+    blur: 0.05
+
+# Paths
+paths:
+  model_save_dir: "checkpoints"
+  log_dir: "logs"
+  output_dir: "outputs"
+  
+# Logging
+logging:
+  use_tensorboard: false  # Disable tensorboard for CPU
+  use_wandb: false
+  log_interval: 5  # More frequent logging
+  save_interval: 2  # Save more frequently

@@ -1,0 +1,15 @@
+Video Inference Summary
+==============================
+
+Frames processed: 10
+Model type: Dummy segmentation (demo)
+Classes: Background, Dark, Medium-Dark, Medium, Bright, Very-Bright, Circle
+
+Output files per frame:
+- *_original.jpg: Original video frame
+- *_mask.png: Segmentation mask (scaled)
+- *_visualization.jpg: Colored segmentation
+- *_overlay.jpg: Original + segmentation overlay
+
+Note: This is a demonstration with dummy segmentation.
+To use real U-Net inference, you need a trained model.
