@@ -1,136 +1,242 @@
 #!/usr/bin/env python3
 """
 Main test runner for U-Net semantic segmentation project
+
+This updated runner works with the new consolidated test structure:
+- tests/core_tests.py - Core functionality tests
+- tests/inference_tests.py - All inference testing
+- tests/training_tests.py - Training and model tests
+- examples/demo_scripts.py - Demo scripts
 """
 
 import sys
 import argparse
+import os
 from pathlib import Path
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
-from tests.test_video_inference import VideoInferenceTester
-from tests.test_model_comparison import ModelComparisonTester
-from tests.test_training import TrainingTester
+from tests.core_tests import CoreTester
+from tests.inference_tests import InferenceTester
+from tests.training_tests import TrainingTester
+from examples.demo_scripts import DemoScripts
 
-def run_video_inference_tests(video_path: str, max_frames: int = 5):
-    """Run video inference tests"""
-    print("🎬 Running Video Inference Tests")
+
+def run_core_tests(video_path: str = None) -> dict:
+    """Run core functionality tests"""
+    print("🔧 Running Core Functionality Tests")
     print("=" * 50)
     
-    tester = VideoInferenceTester()
+    tester = CoreTester()
+    results = tester.run_all_tests(video_path)
     
-    # Test dummy inference
-    print("\n1. Testing Dummy Segmentation...")
-    dummy_results = tester.test_dummy_inference(video_path, max_frames=max_frames)
-    
-    # Test trained model (if available)
-    if Path("checkpoints/best_model.pth").exists():
-        print("\n2. Testing Trained Model...")
-        trained_results = tester.test_trained_model_inference(video_path, max_frames=max_frames)
-    else:
-        print("\n2. Skipping Trained Model (no model found)")
-        trained_results = None
-    
-    # Test pre-trained models
-    print("\n3. Testing Pre-trained VGG11...")
-    vgg11_results = tester.test_pretrained_inference(
-        video_path, encoder_name="vgg11", max_frames=max_frames
-    )
-    
-    print("\n4. Testing Pre-trained EfficientNet...")
-    efficientnet_results = tester.test_pretrained_inference(
-        video_path, encoder_name="efficientnet", max_frames=max_frames
-    )
-    
-    return {
-        "dummy": dummy_results,
-        "trained": trained_results,
-        "vgg11": vgg11_results,
-        "efficientnet": efficientnet_results
-    }
+    return results
 
-def run_model_comparison_tests():
-    """Run model comparison tests"""
-    print("\n🔍 Running Model Comparison Tests")
+
+def run_inference_tests(video_path: str, model_path: str = None) -> dict:
+    """Run all inference tests"""
+    print("🎬 Running Inference Tests")
     print("=" * 50)
     
-    tester = ModelComparisonTester()
+    tester = InferenceTester()
+    results = tester.run_all_inference_tests(video_path, model_path)
     
-    # Compare all models
-    comparison_results = tester.compare_all_models()
-    
-    # Analyze quality
-    quality_results = tester.analyze_segmentation_quality()
-    
-    return {
-        "comparison": comparison_results,
-        "quality": quality_results
-    }
+    return results
 
-def run_training_tests(num_epochs: int = 3):
-    """Run training tests"""
-    print("\n🚀 Running Training Tests")
+
+def run_training_tests() -> dict:
+    """Run all training tests"""
+    print("🚀 Running Training Tests")
     print("=" * 50)
     
     tester = TrainingTester()
+    results = tester.run_all_training_tests()
     
-    # Test simple training
-    print("\n1. Testing Simple Training...")
-    simple_results = tester.test_simple_training(num_epochs=num_epochs)
+    return results
+
+
+def run_demo_scripts(video_path: str = None) -> dict:
+    """Run all demo scripts"""
+    print("🎭 Running Demo Scripts")
+    print("=" * 50)
     
-    # Test pre-trained training
-    print("\n2. Testing Pre-trained Training...")
-    pretrained_results = tester.test_pretrained_training(
-        encoder_name="vgg11", num_epochs=num_epochs
-    )
+    demos = DemoScripts()
+    results = demos.run_all_demos(video_path)
     
-    return {
-        "simple": simple_results,
-        "pretrained": pretrained_results
-    }
+    return results
+
+
+def run_quick_validation() -> dict:
+    """Run quick validation tests (core + basic inference)"""
+    print("⚡ Running Quick Validation")
+    print("=" * 50)
+    
+    results = {}
+    
+    # Core tests
+    print("\n1. Core Functionality...")
+    core_tester = CoreTester()
+    results['core'] = core_tester.run_all_tests()
+    
+    # Basic inference test
+    print("\n2. Basic Inference...")
+    inference_tester = InferenceTester()
+    
+    # Check for video file
+    video_path = "video_processing/data3_users_yoavnavon_clips_dqa_glued_sv_vehicle_day_FRONT_RIGHT_GENERIC_1x.mp4"
+    if os.path.exists(video_path):
+        results['inference'] = inference_tester.test_dummy_inference(video_path, max_frames=3)
+    else:
+        print("   ⚠️ No video file found, skipping inference tests")
+        results['inference'] = {'success': False, 'error': 'No video file found'}
+    
+    return results
+
+
+def run_comprehensive_tests(video_path: str, model_path: str = None) -> dict:
+    """Run comprehensive test suite"""
+    print("🧪 Running Comprehensive Test Suite")
+    print("=" * 60)
+    
+    results = {}
+    
+    # Core functionality
+    print("\n1. Core Functionality Tests...")
+    results['core'] = run_core_tests(video_path)
+    
+    # Inference tests
+    print("\n2. Inference Tests...")
+    results['inference'] = run_inference_tests(video_path, model_path)
+    
+    # Training tests
+    print("\n3. Training Tests...")
+    results['training'] = run_training_tests()
+    
+    # Demo scripts
+    print("\n4. Demo Scripts...")
+    results['demos'] = run_demo_scripts(video_path)
+    
+    return results
+
+
+def print_test_summary(results: dict):
+    """Print a summary of test results"""
+    print("\n📋 Test Summary")
+    print("=" * 50)
+    
+    total_tests = 0
+    passed_tests = 0
+    
+    for category, category_results in results.items():
+        if isinstance(category_results, dict):
+            if 'overall_success' in category_results:
+                # Core tests
+                status = "✅" if category_results['overall_success'] else "❌"
+                print(f"{category.upper()}: {status}")
+                total_tests += 1
+                if category_results['overall_success']:
+                    passed_tests += 1
+            elif 'success' in category_results:
+                # Single test result
+                status = "✅" if category_results['success'] else "❌"
+                print(f"{category.upper()}: {status}")
+                total_tests += 1
+                if category_results['success']:
+                    passed_tests += 1
+            else:
+                # Multiple test results
+                print(f"{category.upper()}:")
+                for test_name, test_result in category_results.items():
+                    if isinstance(test_result, dict) and 'success' in test_result:
+                        status = "✅" if test_result['success'] else "❌"
+                        print(f"  {test_name}: {status}")
+                        total_tests += 1
+                        if test_result['success']:
+                            passed_tests += 1
+    
+    print(f"\nOverall: {passed_tests}/{total_tests} tests passed")
+    
+    if passed_tests == total_tests:
+        print("🎉 All tests passed!")
+    else:
+        print(f"⚠️ {total_tests - passed_tests} tests failed")
+
 
 def main():
     """Main test runner"""
-    parser = argparse.ArgumentParser(description="Run U-Net tests")
-    parser.add_argument("--video", default="video_processing/data3_users_yoavnavon_clips_dqa_glued_sv_vehicle_day_FRONT_RIGHT_GENERIC_1x.mp4", help="Video path for testing")
-    parser.add_argument("--max-frames", type=int, default=5, help="Maximum frames to process")
-    parser.add_argument("--epochs", type=int, default=3, help="Number of training epochs")
-    parser.add_argument("--tests", nargs="+", choices=["inference", "comparison", "training", "all"], default=["all"], help="Tests to run")
+    parser = argparse.ArgumentParser(description="Run U-Net tests with consolidated structure")
+    parser.add_argument("--video", 
+                       default="video_processing/data3_users_yoavnavon_clips_dqa_glued_sv_vehicle_day_FRONT_RIGHT_GENERIC_1x.mp4", 
+                       help="Video path for testing")
+    parser.add_argument("--model", 
+                       default="checkpoints/best_model.pth", 
+                       help="Path to trained model")
+    parser.add_argument("--tests", 
+                       nargs="+", 
+                       choices=["core", "inference", "training", "demos", "quick", "all"], 
+                       default=["all"], 
+                       help="Tests to run")
+    parser.add_argument("--max-frames", 
+                       type=int, 
+                       default=5, 
+                       help="Maximum frames to process (for inference tests)")
     
     args = parser.parse_args()
     
     print("🧪 U-Net Semantic Segmentation Test Suite")
     print("=" * 60)
     print(f"Video: {args.video}")
-    print(f"Max frames: {args.max_frames}")
-    print(f"Training epochs: {args.epochs}")
+    print(f"Model: {args.model}")
     print(f"Tests: {', '.join(args.tests)}")
+    print(f"Max frames: {args.max_frames}")
     print()
+    
+    # Check if video file exists
+    if not os.path.exists(args.video):
+        print(f"⚠️ Video file not found: {args.video}")
+        print("   Some tests will be skipped or use dummy data")
+        args.video = None
+    
+    # Check if model file exists
+    if not os.path.exists(args.model):
+        print(f"⚠️ Model file not found: {args.model}")
+        print("   Trained model tests will be skipped")
+        args.model = None
     
     results = {}
     
     # Run selected tests
-    if "inference" in args.tests or "all" in args.tests:
-        results["inference"] = run_video_inference_tests(args.video, args.max_frames)
+    if "core" in args.tests or "all" in args.tests:
+        results["core"] = run_core_tests(args.video)
     
-    if "comparison" in args.tests or "all" in args.tests:
-        results["comparison"] = run_model_comparison_tests()
+    if "inference" in args.tests or "all" in args.tests:
+        results["inference"] = run_inference_tests(args.video, args.model)
     
     if "training" in args.tests or "all" in args.tests:
-        results["training"] = run_training_tests(args.epochs)
+        results["training"] = run_training_tests()
     
-    # Summary
-    print("\n🎉 Test Suite Completed!")
-    print("=" * 40)
-    print("Results saved to:")
-    print("  • test_outputs/ - All test outputs")
-    print("  • checkpoints/ - Trained models")
-    print("  • logs/ - Training logs")
+    if "demos" in args.tests or "all" in args.tests:
+        results["demos"] = run_demo_scripts(args.video)
+    
+    if "quick" in args.tests:
+        results = run_quick_validation()
+    
+    # Print summary
+    print_test_summary(results)
+    
+    # Print output locations
+    print("\n📁 Output Locations")
+    print("=" * 30)
+    print("• test_outputs/core_tests/ - Core functionality test results")
+    print("• test_outputs/inference_tests/ - Inference test results")
+    print("• test_outputs/training_tests/ - Training test results")
+    print("• demo_outputs/ - Demo script outputs")
+    print("• checkpoints/ - Trained models")
     
     return results
+
 
 if __name__ == "__main__":
     main()
