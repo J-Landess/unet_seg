@@ -1,18 +1,21 @@
 # U-Net Semantic Segmentation
 
-A comprehensive, production-ready implementation of U-Net for semantic segmentation with support for BDD100K and KITTI datasets, video processing, and advanced deep learning features.
+A comprehensive, production-ready implementation of U-Net for semantic segmentation with support for BDD100K and KITTI datasets, video processing, instance extraction, and advanced deep learning features.
 
 ## 🚀 **Features**
 
 - **Complete U-Net Architecture**: 31M parameters with skip connections and customizable depth
 - **Real-World Datasets**: BDD100K (100K driving images) and KITTI support
 - **Video Processing**: Frame-by-frame video analysis with tensor output
+- **Instance Extraction**: Watershed and Connected Components algorithms for instance segmentation
+- **Pre-trained Models**: VGG11, EfficientNet, and other architectures via segmentation-models-pytorch
 - **Advanced Data Augmentation**: Albumentations with driving-specific augmentations
 - **Professional Metrics**: Pixel accuracy, mean IoU, Dice coefficient, per-class metrics
 - **Comprehensive Visualization**: Training curves, prediction overlays, dataset analysis
 - **Flexible Configuration**: YAML-based configuration system
 - **Experiment Tracking**: TensorBoard and Weights & Biases integration
 - **Production Ready**: Complete CLI interface, error handling, logging
+- **Comprehensive Testing**: Consolidated test suite with core, inference, and training tests
 
 ## 📦 **Quick Start**
 
@@ -42,7 +45,10 @@ pip install -r requirements.txt
 ### **2. Verify Installation**
 ```bash
 # Test everything works
-python test_environment.py
+python tests/core_tests.py
+
+# Or run quick validation
+python tests/run_tests.py --tests quick
 ```
 
 ### **3. Quick Test**
@@ -114,25 +120,6 @@ prediction, probabilities = inference.predict_single("image.jpg")
 visualization = inference.visualize_prediction("image.jpg", prediction)
 ```
 
-#### **Datasets**
-```python
-from data import BDD100KSegmentationDataset, KITTISegmentationDataset
-
-# BDD100K dataset
-bdd_dataset = BDD100KSegmentationDataset(
-    root_dir="datasets/bdd100k",
-    split='train',
-    image_size=(512, 512)
-)
-
-# KITTI dataset
-kitti_dataset = KITTISegmentationDataset(
-    root_dir="datasets/kitti", 
-    split='train',
-    image_size=(512, 512)
-)
-```
-
 #### **Video Processing**
 ```python
 from video_processing import VideoFrameIterator, TensorFrameBatcher
@@ -149,43 +136,137 @@ batcher = TensorFrameBatcher(batch_size=8)
 batch = batcher.get_batch()  # Ready for model inference
 ```
 
+#### **Instance Extraction**
+```python
+from instance_extraction import InstanceExtractor
+
+# Initialize extractor
+extractor = InstanceExtractor(algorithm="watershed")
+
+# Extract instances from semantic mask
+instances = extractor.extract_instances(
+    semantic_mask=semantic_mask,
+    target_classes=[2, 11, 13],  # buildings, people, cars
+    min_instance_size=50
+)
+
+# Visualize results
+visualization = extractor.visualize_instances(
+    instances=instances,
+    original_image=image,
+    show_overlay=True,
+    show_contours=True
+)
+```
+
 ## 📁 **Project Structure**
 
 ```
 unet/
-├── main.py                      # Main entry point
+├── main.py                          # Main entry point
 ├── config/
-│   └── config.yaml              # Configuration file
+│   ├── config.yaml                  # Main configuration
+│   ├── config_cpu.yaml             # CPU-optimized config
+│   └── config_cuda.yaml            # CUDA-optimized config
 ├── data/
 │   ├── __init__.py
-│   ├── dataset.py               # Generic dataset classes
-│   ├── bdd100k_dataset.py       # BDD100K dataset implementation
-│   ├── kitti_dataset.py         # KITTI dataset implementation
-│   └── dataset_utils.py         # Dataset utilities and analysis
+│   ├── dataset.py                   # Generic dataset classes
+│   ├── bdd100k_dataset.py          # BDD100K dataset implementation
+│   ├── kitti_dataset.py            # KITTI dataset implementation
+│   └── dataset_utils.py            # Dataset utilities and analysis
 ├── models/
 │   ├── __init__.py
-│   └── unet.py                  # U-Net model implementation
+│   └── unet.py                     # U-Net model implementation
 ├── training/
 │   ├── __init__.py
-│   └── trainer.py               # Training pipeline
+│   └── trainer.py                  # Training pipeline
 ├── inference/
 │   ├── __init__.py
-│   └── inference.py             # Inference engine
-├── utils/
+│   └── inference.py                # Inference engine
+├── instance_extraction/            # Instance segmentation subpackage
 │   ├── __init__.py
-│   ├── metrics.py               # Evaluation metrics
-│   └── visualization.py         # Visualization utilities
+│   ├── core.py                     # Main instance extractor
+│   ├── base.py                     # Base classes
+│   ├── algorithms/
+│   │   ├── watershed.py            # Watershed algorithm
+│   │   └── connected_components.py # Connected components algorithm
+│   ├── utils/
+│   │   ├── metrics.py              # Instance metrics
+│   │   └── postprocessing.py       # Post-processing utilities
+│   └── visualization/
+│       └── visualizer.py           # Visualization tools
 ├── video_processing/
 │   ├── __init__.py
-│   ├── frame_iterator.py        # Video frame processing
-│   └── README.md                # Video processing documentation
-├── examples/                    # Example scripts
-├── requirements.txt             # Pip dependencies
-├── environment.yml              # Conda environment (general)
-├── environment-macos.yml        # Conda environment (macOS)
-├── environment-cuda.yml         # Conda environment (CUDA)
-└── test_environment.py          # Environment testing script
+│   └── frame_iterator.py           # Video frame processing
+├── utils/
+│   ├── __init__.py
+│   ├── metrics.py                  # Evaluation metrics
+│   └── visualization.py            # Visualization utilities
+├── tests/                          # Consolidated test suite
+│   ├── __init__.py
+│   ├── run_tests.py                # Main test runner
+│   ├── core_tests.py               # Core functionality tests
+│   ├── inference_tests.py          # Inference testing
+│   ├── training_tests.py           # Training and model tests
+│   ├── test_model_comparison.py    # Model comparison tests
+│   ├── test_training.py            # Legacy training tests
+│   └── test_video_inference.py     # Legacy video inference tests
+├── examples/                       # Example scripts and demos
+│   ├── __init__.py
+│   ├── demo_scripts.py             # Consolidated demo scripts
+│   └── ipython_testing_guide.md    # iPython testing guide
+├── unet_test/                      # Sample datasets
+│   ├── bdd100k_sample/             # BDD100K sample data
+│   └── kitti_sample/               # KITTI sample data
+├── requirements.txt                # Pip dependencies
+├── environment.yml                 # Conda environment (general)
+├── environment-macos.yml           # Conda environment (macOS)
+├── environment-cuda.yml            # Conda environment (CUDA)
+├── train_bdd100k.py               # BDD100K training script
+├── train_bdd100k_simple.py        # Simplified BDD100K training
+├── pretrained_model_inference.py  # Pre-trained model inference
+├── compare_all_models.py          # Model comparison utility
+├── compare_inference_results.py   # Inference comparison utility
+└── retrain_colorful.py            # Colorful retraining script
 ```
+
+## 🧪 **Testing**
+
+The project includes a comprehensive test suite organized by functionality:
+
+### **Run All Tests**
+```bash
+# Run complete test suite
+python tests/run_tests.py
+
+# Run specific test categories
+python tests/run_tests.py --tests core inference training demos
+
+# Quick validation
+python tests/run_tests.py --tests quick
+```
+
+### **Individual Test Modules**
+```bash
+# Core functionality tests
+python tests/core_tests.py
+
+# Inference tests
+python tests/inference_tests.py
+
+# Training tests
+python tests/training_tests.py
+
+# Demo scripts
+python examples/demo_scripts.py
+```
+
+### **Test Categories**
+
+- **Core Tests** (`tests/core_tests.py`): Environment setup, dataset functionality, video processing
+- **Inference Tests** (`tests/inference_tests.py`): Dummy, trained, and pre-trained model inference
+- **Training Tests** (`tests/training_tests.py`): Training pipeline, model architecture, BDD100K training
+- **Demo Scripts** (`examples/demo_scripts.py`): Complete workflow demonstrations
 
 ## 🔧 **Configuration**
 
@@ -273,6 +354,58 @@ batcher = TensorFrameBatcher(batch_size=8)
 batch = batcher.get_batch()  # (B, C, H, W) tensor
 ```
 
+## 🔍 **Instance Extraction**
+
+Convert semantic segmentation masks to instance segmentation:
+
+```python
+from instance_extraction import InstanceExtractor
+
+# Initialize with Watershed algorithm
+extractor = InstanceExtractor(algorithm="watershed")
+
+# Extract instances
+instances = extractor.extract_instances(
+    semantic_mask=semantic_mask,
+    target_classes=[2, 11, 13],  # buildings, people, cars
+    min_instance_size=50
+)
+
+# Visualize results
+visualization = extractor.visualize_instances(
+    instances=instances,
+    original_image=image,
+    output_path="output.jpg",
+    show_overlay=True,
+    show_contours=True,
+    show_labels=True
+)
+```
+
+## 🏗️ **Pre-trained Models**
+
+Use pre-trained models for better performance:
+
+```python
+# VGG11-based U-Net
+from segmentation_models_pytorch import Unet
+
+model = Unet(
+    encoder_name="vgg11",
+    encoder_weights="imagenet",
+    classes=19,
+    activation=None
+)
+
+# EfficientNet-based U-Net
+model = Unet(
+    encoder_name="efficientnet-b0",
+    encoder_weights="imagenet",
+    classes=19,
+    activation=None
+)
+```
+
 ## 📈 **Performance & Monitoring**
 
 ### **Metrics**
@@ -280,12 +413,14 @@ batch = batcher.get_batch()  # (B, C, H, W) tensor
 - **Mean IoU**: Intersection over Union for each class
 - **Dice Coefficient**: Overlap measure for segmentation
 - **Per-Class Metrics**: Detailed analysis for each class
+- **Instance Metrics**: Instance-level evaluation
 
 ### **Visualization**
 - **Training Curves**: Loss and metric plots
 - **Prediction Overlays**: Side-by-side comparisons
 - **Confusion Matrices**: Class-wise performance
 - **Dataset Analysis**: Class distribution and statistics
+- **Instance Visualizations**: Contour and label overlays
 
 ### **Experiment Tracking**
 - **TensorBoard**: Real-time training monitoring
@@ -305,6 +440,12 @@ batch = batcher.get_batch()  # (B, C, H, W) tensor
 2. Implement required methods
 3. Add to `data/__init__.py`
 4. Update configuration options
+
+### **Adding New Instance Algorithms**
+1. Create algorithm file in `instance_extraction/algorithms/`
+2. Inherit from `BaseInstanceAlgorithm`
+3. Implement required methods
+4. Add to `instance_extraction/__init__.py`
 
 ### **Adding New Metrics**
 1. Add metric functions to `utils/metrics.py`
@@ -331,14 +472,20 @@ batch = batcher.get_batch()  # (B, C, H, W) tensor
    - Verify dataset directory structure
    - Ensure image/mask filename matching
 
+4. **Instance Extraction Issues**
+   - Adjust `min_instance_size` parameter
+   - Try different algorithms (watershed vs connected_components)
+   - Check semantic mask quality
+
 ### **Environment Testing**
 ```bash
 # Run comprehensive test
-python test_environment.py
+python tests/core_tests.py
 
 # Test specific components
 python -c "from data import list_available_datasets; list_available_datasets()"
 python -c "from models import UNet; print('U-Net ready!')"
+python -c "from instance_extraction import InstanceExtractor; print('Instance extraction ready!')"
 ```
 
 ## 📚 **Documentation**
@@ -347,6 +494,22 @@ python -c "from models import UNet; print('U-Net ready!')"
 - **Video Processing**: `video_processing/README.md`
 - **Configuration Reference**: `config/config.yaml`
 - **API Documentation**: Inline docstrings and type hints
+- **Test Documentation**: `tests/README.md`
+
+## 🎭 **Examples & Demos**
+
+The `examples/demo_scripts.py` module provides comprehensive demonstrations:
+
+- **Instance Integration Demo**: Complete semantic to instance pipeline
+- **Tensor Video Processing**: Deep learning preprocessing with batching
+- **U-Net Video Segmentation**: Video segmentation with batch processing
+- **Inference Examples**: Basic inference functionality
+- **Training Examples**: Training pipeline demonstrations
+
+Run demos:
+```bash
+python examples/demo_scripts.py
+```
 
 ## 🤝 **Contributing**
 
@@ -354,7 +517,8 @@ Contributions are welcome! Please:
 1. Fork the repository
 2. Create a feature branch
 3. Add tests for new functionality
-4. Submit a pull request
+4. Run the test suite: `python tests/run_tests.py`
+5. Submit a pull request
 
 ## 📄 **License**
 
@@ -367,3 +531,4 @@ This project is open source and available under the MIT License.
 - **KITTI Dataset**: Karlsruhe Institute of Technology
 - **PyTorch Team**: Excellent deep learning framework
 - **Albumentations**: Comprehensive data augmentation library
+- **segmentation-models-pytorch**: Pre-trained model implementations
