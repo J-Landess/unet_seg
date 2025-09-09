@@ -74,3 +74,4 @@ tensorboard_logs/
 *.temp
 temp/
 tmp/
+video_processing/*.mp4
