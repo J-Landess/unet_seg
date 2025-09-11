@@ -1,0 +1,522 @@
+[
+  {
+    "frame_number": 0,
+    "timestamp": 0.0,
+    "timestamp_formatted": "0:00:00",
+    "video_info": {
+      "filename": "test_video.mp4",
+      "path": "test_video.mp4",
+      "total_frames": 150,
+      "fps": 30.0,
+      "width": 640,
+      "height": 480,
+      "duration_seconds": 5.0,
+      "fourcc": 877677894,
+      "codec": "FMP4"
+    },
+    "processing_time": 0.08894777297973633,
+    "custom_metadata": {
+      "resized_to": [
+        320,
+        240
+      ],
+      "original_size": [
+        640,
+        480
+      ],
+      "shape": [
+        240,
+        320,
+        3
+      ],
+      "dtype": "uint8",
+      "mean_brightness": 4.910924479166667,
+      "std_brightness": 28.31077432985108,
+      "min_brightness": 0,
+      "max_brightness": 254,
+      "mean_rgb": [
+        3.8915885416666667,
+        6.8592578125,
+        1.4924609375
+      ],
+      "std_rgb": [
+        22.804165534079555,
+        39.51605714599856,
+        12.863871421706735
+      ],
+      "mean_hue": 2.6727734375,
+      "mean_saturation": 8.170559895833334,
+      "mean_value": 6.875364583333333,
+      "file_size_bytes": 230400,
+      "unique_colors": 460
+    }
+  },
+  {
+    "frame_number": 15,
+    "timestamp": 0.5,
+    "timestamp_formatted": "0:00:00.500000",
+    "video_info": {
+      "filename": "test_video.mp4",
+      "path": "test_video.mp4",
+      "total_frames": 150,
+      "fps": 30.0,
+      "width": 640,
+      "height": 480,
+      "duration_seconds": 5.0,
+      "fourcc": 877677894,
+      "codec": "FMP4"
+    },
+    "processing_time": 0.08435702323913574,
+    "custom_metadata": {
+      "resized_to": [
+        320,
+        240
+      ],
+      "original_size": [
+        640,
+        480
+      ],
+      "shape": [
+        240,
+        320,
+        3
+      ],
+      "dtype": "uint8",
+      "mean_brightness": 4.526953125,
+      "std_brightness": 26.10057675344332,
+      "min_brightness": 0,
+      "max_brightness": 255,
+      "mean_rgb": [
+        6.1642447916666665,
+        6.044270833333333,
+        0.9365234375
+      ],
+      "std_rgb": [
+        35.230233490191495,
+        34.608510566549704,
+        12.67742290275038
+      ],
+      "mean_hue": 3.2014973958333335,
+      "mean_saturation": 9.1321484375,
+      "mean_value": 6.1933203125,
+      "file_size_bytes": 230400,
+      "unique_colors": 564
+    }
+  },
+  {
+    "frame_number": 30,
+    "timestamp": 1.0,
+    "timestamp_formatted": "0:00:01",
+    "video_info": {
+      "filename": "test_video.mp4",
+      "path": "test_video.mp4",
+      "total_frames": 150,
+      "fps": 30.0,
+      "width": 640,
+      "height": 480,
+      "duration_seconds": 5.0,
+      "fourcc": 877677894,
+      "codec": "FMP4"
+    },
+    "processing_time": 0.08042597770690918,
+    "custom_metadata": {
+      "resized_to": [
+        320,
+        240
+      ],
+      "original_size": [
+        640,
+        480
+      ],
+      "shape": [
+        240,
+        320,
+        3
+      ],
+      "dtype": "uint8",
+      "mean_brightness": 4.699869791666667,
+      "std_brightness": 26.939341100728118,
+      "min_brightness": 0,
+      "max_brightness": 255,
+      "mean_rgb": [
+        7.276705729166666,
+        4.8455208333333335,
+        3.4582552083333336
+      ],
+      "std_rgb": [
+        41.370590576744405,
+        27.769181916507126,
+        20.560405847705653
+      ],
+      "mean_hue": 4.280598958333333,
+      "mean_saturation": 8.15703125,
+      "mean_value": 7.2927473958333335,
+      "file_size_bytes": 230400,
+      "unique_colors": 513
+    }
+  },
+  {
+    "frame_number": 45,
+    "timestamp": 1.5,
+    "timestamp_formatted": "0:00:01.500000",
+    "video_info": {
+      "filename": "test_video.mp4",
+      "path": "test_video.mp4",
+      "total_frames": 150,
+      "fps": 30.0,
+      "width": 640,
+      "height": 480,
+      "duration_seconds": 5.0,
+      "fourcc": 877677894,
+      "codec": "FMP4"
+    },
+    "processing_time": 0.07396507263183594,
+    "custom_metadata": {
+      "resized_to": [
+        320,
+        240
+      ],
+      "original_size": [
+        640,
+        480
+      ],
+      "shape": [
+        240,
+        320,
+        3
+      ],
+      "dtype": "uint8",
+      "mean_brightness": 4.681328125,
+      "std_brightness": 26.848232994049177,
+      "min_brightness": 0,
+      "max_brightness": 255,
+      "mean_rgb": [
+        6.5516145833333335,
+        3.3909765625,
+        6.501744791666667
+      ],
+      "std_rgb": [
+        37.22240263349194,
+        20.3195235122548,
+        37.01731009886729
+      ],
+      "mean_hue": 5.072994791666667,
+      "mean_saturation": 6.877799479166667,
+      "mean_value": 6.5730208333333335,
+      "file_size_bytes": 230400,
+      "unique_colors": 509
+    }
+  },
+  {
+    "frame_number": 60,
+    "timestamp": 2.0,
+    "timestamp_formatted": "0:00:02",
+    "video_info": {
+      "filename": "test_video.mp4",
+      "path": "test_video.mp4",
+      "total_frames": 150,
+      "fps": 30.0,
+      "width": 640,
+      "height": 480,
+      "duration_seconds": 5.0,
+      "fourcc": 877677894,
+      "codec": "FMP4"
+    },
+    "processing_time": 0.07692813873291016,
+    "custom_metadata": {
+      "resized_to": [
+        320,
+        240
+      ],
+      "original_size": [
+        640,
+        480
+      ],
+      "shape": [
+        240,
+        320,
+        3
+      ],
+      "dtype": "uint8",
+      "mean_brightness": 3.8609505208333332,
+      "std_brightness": 22.549355615623334,
+      "min_brightness": 0,
+      "max_brightness": 255,
+      "mean_rgb": [
+        4.484375,
+        2.1059765625,
+        7.090286458333333
+      ],
+      "std_rgb": [
+        25.748272406144874,
+        15.2217046484847,
+        40.336235575952976
+      ],
+      "mean_hue": 5.1133984375,
+      "mean_saturation": 7.5175,
+      "mean_value": 7.105104166666667,
+      "file_size_bytes": 230400,
+      "unique_colors": 386
+    }
+  },
+  {
+    "frame_number": 75,
+    "timestamp": 2.5,
+    "timestamp_formatted": "0:00:02.500000",
+    "video_info": {
+      "filename": "test_video.mp4",
+      "path": "test_video.mp4",
+      "total_frames": 150,
+      "fps": 30.0,
+      "width": 640,
+      "height": 480,
+      "duration_seconds": 5.0,
+      "fourcc": 877677894,
+      "codec": "FMP4"
+    },
+    "processing_time": 0.08328700065612793,
+    "custom_metadata": {
+      "resized_to": [
+        320,
+        240
+      ],
+      "original_size": [
+        640,
+        480
+      ],
+      "shape": [
+        240,
+        320,
+        3
+      ],
+      "dtype": "uint8",
+      "mean_brightness": 2.2605208333333335,
+      "std_brightness": 15.498807707489394,
+      "min_brightness": 0,
+      "max_brightness": 255,
+      "mean_rgb": [
+        2.106328125,
+        1.1337890625,
+        4.5553515625
+      ],
+      "std_rgb": [
+        14.984112126009803,
+        12.885681409323633,
+        26.24214780884361
+      ],
+      "mean_hue": 4.81265625,
+      "mean_saturation": 7.6491927083333335,
+      "mean_value": 4.561979166666666,
+      "file_size_bytes": 230400,
+      "unique_colors": 378
+    }
+  },
+  {
+    "frame_number": 90,
+    "timestamp": 3.0,
+    "timestamp_formatted": "0:00:03",
+    "video_info": {
+      "filename": "test_video.mp4",
+      "path": "test_video.mp4",
+      "total_frames": 150,
+      "fps": 30.0,
+      "width": 640,
+      "height": 480,
+      "duration_seconds": 5.0,
+      "fourcc": 877677894,
+      "codec": "FMP4"
+    },
+    "processing_time": 0.08190226554870605,
+    "custom_metadata": {
+      "resized_to": [
+        320,
+        240
+      ],
+      "original_size": [
+        640,
+        480
+      ],
+      "shape": [
+        240,
+        320,
+        3
+      ],
+      "dtype": "uint8",
+      "mean_brightness": 1.0635807291666666,
+      "std_brightness": 13.257463766185143,
+      "min_brightness": 0,
+      "max_brightness": 255,
+      "mean_rgb": [
+        0.8630208333333333,
+        0.8591796875,
+        1.5666015625
+      ],
+      "std_rgb": [
+        13.166997776938345,
+        13.233486185384185,
+        13.852274620023215
+      ],
+      "mean_hue": 1.04046875,
+      "mean_saturation": 8.548411458333334,
+      "mean_value": 1.5739973958333333,
+      "file_size_bytes": 230400,
+      "unique_colors": 263
+    }
+  },
+  {
+    "frame_number": 105,
+    "timestamp": 3.5,
+    "timestamp_formatted": "0:00:03.500000",
+    "video_info": {
+      "filename": "test_video.mp4",
+      "path": "test_video.mp4",
+      "total_frames": 150,
+      "fps": 30.0,
+      "width": 640,
+      "height": 480,
+      "duration_seconds": 5.0,
+      "fourcc": 877677894,
+      "codec": "FMP4"
+    },
+    "processing_time": 0.07127118110656738,
+    "custom_metadata": {
+      "resized_to": [
+        320,
+        240
+      ],
+      "original_size": [
+        640,
+        480
+      ],
+      "shape": [
+        240,
+        320,
+        3
+      ],
+      "dtype": "uint8",
+      "mean_brightness": 1.1463411458333332,
+      "std_brightness": 13.74717313358894,
+      "min_brightness": 0,
+      "max_brightness": 255,
+      "mean_rgb": [
+        1.3055859375,
+        1.1741796875,
+        1.0382421875
+      ],
+      "std_rgb": [
+        13.845399734110325,
+        13.780779469631938,
+        13.68869985356274
+      ],
+      "mean_hue": 3.0259505208333333,
+      "mean_saturation": 5.466549479166667,
+      "mean_value": 1.3113671875,
+      "file_size_bytes": 230400,
+      "unique_colors": 159
+    }
+  },
+  {
+    "frame_number": 120,
+    "timestamp": 4.0,
+    "timestamp_formatted": "0:00:04",
+    "video_info": {
+      "filename": "test_video.mp4",
+      "path": "test_video.mp4",
+      "total_frames": 150,
+      "fps": 30.0,
+      "width": 640,
+      "height": 480,
+      "duration_seconds": 5.0,
+      "fourcc": 877677894,
+      "codec": "FMP4"
+    },
+    "processing_time": 0.07282304763793945,
+    "custom_metadata": {
+      "resized_to": [
+        320,
+        240
+      ],
+      "original_size": [
+        640,
+        480
+      ],
+      "shape": [
+        240,
+        320,
+        3
+      ],
+      "dtype": "uint8",
+      "mean_brightness": 2.6481510416666665,
+      "std_brightness": 17.239532730583303,
+      "min_brightness": 0,
+      "max_brightness": 255,
+      "mean_rgb": [
+        3.157434895833333,
+        2.0911848958333334,
+        3.538763020833333
+      ],
+      "std_rgb": [
+        19.278878316681375,
+        15.416166277989,
+        21.01430768872839
+      ],
+      "mean_hue": 4.7958984375,
+      "mean_saturation": 5.630455729166667,
+      "mean_value": 3.550572916666667,
+      "file_size_bytes": 230400,
+      "unique_colors": 398
+    }
+  },
+  {
+    "frame_number": 135,
+    "timestamp": 4.5,
+    "timestamp_formatted": "0:00:04.500000",
+    "video_info": {
+      "filename": "test_video.mp4",
+      "path": "test_video.mp4",
+      "total_frames": 150,
+      "fps": 30.0,
+      "width": 640,
+      "height": 480,
+      "duration_seconds": 5.0,
+      "fourcc": 877677894,
+      "codec": "FMP4"
+    },
+    "processing_time": 0.07485008239746094,
+    "custom_metadata": {
+      "resized_to": [
+        320,
+        240
+      ],
+      "original_size": [
+        640,
+        480
+      ],
+      "shape": [
+        240,
+        320,
+        3
+      ],
+      "dtype": "uint8",
+      "mean_brightness": 4.592447916666667,
+      "std_brightness": 26.26210128301562,
+      "min_brightness": 0,
+      "max_brightness": 255,
+      "mean_rgb": [
+        5.563177083333334,
+        3.3781640625,
+        6.619153645833333
+      ],
+      "std_rgb": [
+        31.502312965841227,
+        20.28155334298469,
+        37.45606099863792
+      ],
+      "mean_hue": 4.963151041666666,
+      "mean_saturation": 5.882447916666667,
+      "mean_value": 6.6316536458333335,
+      "file_size_bytes": 230400,
+      "unique_colors": 523
+    }
+  }
+]

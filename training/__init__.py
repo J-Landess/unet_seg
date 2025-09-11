@@ -1,7 +1,5 @@
-"""
-Training package for semantic segmentation
-"""
+"""Training module for DeepSORT with PyTorch Lightning."""
 
-from .trainer import SegmentationTrainer
+from .train import DeepSORTTrainer
 
-__all__ = ['SegmentationTrainer']
+__all__ = ["DeepSORTTrainer"]

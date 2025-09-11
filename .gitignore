@@ -21,21 +21,13 @@ wheels/
 *.egg
 MANIFEST
 
-# PyTorch
-*.pth
-*.pt
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# Environment
-.env
-.venv
+# Virtual environments
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+.venv/
 
 # IDE
 .vscode/
@@ -43,6 +35,33 @@ venv.bak/
 *.swp
 *.swo
 *~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Data and models
+data/
+datasets/
+checkpoints/
+outputs/
+logs/
+*.pth
+*.pt
+*.pkl
+*.h5
+*.hdf5
+
+# Videos and images
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
 
 # OS
 .DS_Store
@@ -53,25 +72,12 @@ venv.bak/
 ehthumbs.db
 Thumbs.db
 
-# Project specific
-data/
-checkpoints/
-logs/
-outputs/
-runs/
-*.log
-*.csv
-*.json
-
-# Weights & Biases
+# Tracking specific
+tracks/
+results/
+evaluations/
 wandb/
 
-# TensorBoard
-tensorboard_logs/
-
-# Temporary files
-*.tmp
-*.temp
-temp/
-tmp/
-video_processing/*.mp4
+# YOLO specific
+runs/
+yolo_weights/
